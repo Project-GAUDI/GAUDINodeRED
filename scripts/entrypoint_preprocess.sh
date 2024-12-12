@@ -84,7 +84,7 @@ if [ "true" == "$enableuserlogin" ]; then
         echo "          AdminPassword default password was set."
         adminpassword="adminP@ssw0rd"
     fi
-    adminpassword=`echo "$adminpassword" | node-red admin hash-pw | awk '{print $2}'`
+    adminpassword=`echo "$adminpassword" | node-red-admin hash-pw | awk '{print $2}'`
     sed -i 's@\$adminpassword\$@'"${adminpassword}"'@g' "${SETTINGS_FILE}"
 
     # GuestPasswordの設定
@@ -95,7 +95,7 @@ if [ "true" == "$enableuserlogin" ]; then
         echo "          GuestPassword default password was set."
         guestpassword="guestP@ssw0rd"
     fi
-    guestpassword=`echo "$guestpassword" | node-red admin hash-pw | awk '{print $2}'`
+    guestpassword=`echo "$guestpassword" | node-red-admin hash-pw | awk '{print $2}'`
     sed -i 's@\$guestpassword\$@'"${guestpassword}"'@g' "${SETTINGS_FILE}"
 
 fi
@@ -107,5 +107,15 @@ if [ -z "${editorroot}" ]; then
     editorroot="/"
 fi
 sed -i 's|\$editorroot\$|'"${editorroot}"'|g' "${SETTINGS_FILE}"
+
+# (隠し)apiMaxLengthの設定(デフォルト:5mb)
+# WebAPIの上限を変更するための設定。新大容量のテスト用に変更できるようにしたため
+# 隠し扱いにしている。(NodeRED上のWebAPIを使用しない場合は大容量メッセージを流す場合でも設定不要)
+echo "Loading apiMaxLength setting."
+apimaxlength="${ApiMaxLength}" 
+if [ -z "${apimaxlength}" ]; then
+    apimaxlength="5mb"
+fi
+sed -i 's|\$apimaxlength\$|'"${apimaxlength}"'|g' "${SETTINGS_FILE}"
 
 exit 0
