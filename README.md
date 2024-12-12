@@ -40,7 +40,33 @@ GAUDINodeREDは、カスタムノードを利用可能な Node-RED を展開し�
 カスタムノードを利用可能な Node-RED を展開する。
 
 ## Quick Start
-鋭意製作中
+1. Personal Accese tokenを作成
+（参考: [個人用アクセス トークンを管理する](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)）
+ 
+2. リポジトリをクローン
+```
+git clone https://github.com/Project-GAUDI/GAUDINodeRED.git
+```
+ 
+3. Dockerイメージをビルド
+```
+docker image build --build-arg GITHUB_TOKEN=<YOUR_Personal_Accese_Token> -t <IMAGE_NAME> ./
+```
+例）
+```
+docker image build --build-arg GITHUB_TOKEN=<YOUR_Personal_Accese_Token> -t ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION> ./
+```
+ 
+4. Dockerイメージをコンテナレジストリにプッシュ
+```
+docker push <IMAGE_NAME>
+```
+例）
+```
+docker push ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION>
+```
+ 
+5. Azure IoT edgeで利用
 
 ## イメージのURL
 準備中
