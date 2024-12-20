@@ -1,0 +1,29 @@
+name: Build and Test
+
+on:
+  pull_request:
+    branches: 
+      - 'develop'
+      - main
+    paths-ignore:
+      - '**/*.md'
+  push:
+    branches:
+      - 'develop'
+      - main
+    paths-ignore:
+      - '**/*.md'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # ビルド
+    - name: Build image
+      run: docker image build --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} -t ghcr.io/project-gaudi/gaudinodered:${{ env.version }} ./
+      env: 
+        version: 6.1.1  # バージョンを指定

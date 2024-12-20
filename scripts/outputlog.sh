@@ -28,17 +28,17 @@ function convertLogLevelFromStrToNum()
     level="$1"
     case "${level,,}" in
         "trace")
-            result=1;;
+            result=7;;
         "debug")
-            result=2;;
+            result=6;;
         "info")
-            result=3;;
+            result=5;;
         "warn")
             result=4;;
         "error")
-            result=5;;
-        *)
             result=3;;
+        *)
+            result=5;;
     esac
 
     return ${result}
@@ -60,15 +60,15 @@ convertLogLevelFromStrToNum "${loglevel_env}"
 level_env=$?
 convertLogLevelFromStrToNum "${loglevel_arg}"
 level_arg=$?
-if [ ${level_env} -gt ${level_arg} ]; then
+if [ ${level_env} -lt ${level_arg} ]; then
     exit 0
 fi
 
 # echo message
-timestamp=`date '+%-d %b %H:%M:%S'`
+timestamp=`date '+%Y-%m-%d %H:%M:%S.%3N %z'`
 if [ -n "${method}" ]; then
-    method="#${method} "
+    method="[${method}]"
 fi
-echo "${timestamp} - [${loglevel_arg,,}] ${method}${message}"
+echo "<${level_arg,,}> ${timestamp} ${method}${message}"
 
 exit 0
