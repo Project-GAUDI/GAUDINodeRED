@@ -159,16 +159,15 @@ docker push ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION>
 | JSON Key                               | Type    | Required | Recommend | Description                                 |
 | -------------------------------------- | ------- | -------- | --------- | -------------------------------- |
 | HostConfig                             | object  | &nbsp;   |           | &nbsp;                                            |
-| &nbsp; ~~Privileged~~                  | ~~boolean~~| ~~○~~ |           | 使用不可<br>~~ホスト上の全デバイスへ接続可能にするか~~      |
-| &nbsp; Binds                           | array   | &nbsp;   |           | Node-RED の設定ファイル格納先をマウントする(※) |
-| &nbsp; PortBindings                    | object  | &nbsp;   |           | &nbsp;                                            |
-| &nbsp;&nbsp; 1880/tcp                  | array   | &nbsp;   |           | &nbsp;                                            |
-| &nbsp;&nbsp;&nbsp; HostPort            | string  |&nbsp;    |           | Node-RED エディタへの接続ポート番号の割当   |
-| &nbsp; Devices                         | array   | &nbsp;   |           | システムデバイスのバインド設定      |
-| &nbsp; &nbsp; {}                       | object  | &nbsp;   |           | &nbsp;      |
-| &nbsp; &nbsp; &nbsp; CgroupPermissions | string  | 〇       |           | コンテナグループのパーミッション設定<br>　※"r","w","m" を組み合わせて指定する（例："rw"）<br> ["r": read, "w": write, "m": mknod]     |
-| &nbsp; &nbsp; &nbsp; PathInContainer   | string  | 〇       |           | コンテナ上のデバイスパス      |
-| &nbsp; &nbsp; &nbsp; PathOnHost        | string  | 〇       |           | ホスト上のデバイスパス      |
+| &nbsp;Binds                           | array   | &nbsp;   |           | Node-RED の設定ファイル格納先をマウントする(※) |
+| &nbsp;PortBindings                    | object  | &nbsp;   |           | &nbsp;                                            |
+| &nbsp;&nbsp;1880/tcp                  | array   | &nbsp;   |           | &nbsp;                                            |
+| &nbsp;&nbsp;&nbsp;HostPort            | string  |&nbsp;    |           | Node-RED エディタへの接続ポート番号の割当   |
+| &nbsp;Devices                         | array   | &nbsp;   |           | システムデバイスのバインド設定      |
+| &nbsp;&nbsp; {}                       | object  | &nbsp;   |           | &nbsp;      |
+| &nbsp;&nbsp;&nbsp;CgroupPermissions | string  | 〇       |           | コンテナグループのパーミッション設定<br>　※"r","w","m" を組み合わせて指定する（例："rw"）<br> ["r": read, "w": write, "m": mknod]     |
+| &nbsp;&nbsp;&nbsp;PathInContainer   | string  | 〇       |           | コンテナ上のデバイスパス      |
+| &nbsp;&nbsp;&nbsp;PathOnHost        | string  | 〇       |           | ホスト上のデバイスパス      |
 
 ※注意事項<br>
 
@@ -319,7 +318,7 @@ docker push ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION>
 
 ## Direct Method
 
-ModuleMethodノードを起点にダイレクトメソッドを実装する (詳細は「GAUDI-NodeRED開発ノウハウ.xlsx」資料)
+ModuleMethodノードを起点にダイレクトメソッドを実装する 
 
 ## NodeREDの機能
 
@@ -331,7 +330,7 @@ ModuleMethodノードを起点にダイレクトメソッドを実装する (詳
 有効にした場合、デプロイボタン横の▽から開けるリストに「停止」が含まれるようになる。<br>
 一度「停止」を押すと、そのボタンは「開始」に切り替わる。<br>
 
-![nodered_flowstop](./docs/img/flowstop_button.png)![nodered_flowstart](./docs/img/flowstart_button.png)
+![nodered_flowstop](./docs/img/flowstop_button.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![nodered_flowstart](./docs/img/flowstart_button.png)
 
 フローが停止した状態でも、ノードの編集・デプロイは可能になっている。<br>
 また、"/data"フォルダのバインドを行っている場合はコンテナの再起動・削除を行っても停止・開始状態は保持され続ける。
@@ -361,7 +360,6 @@ LocalACR連携機能により、ユーザー設定(デプロイしたフロー�
 本機能は、NodeREDが起動中のデバイス上でLocalACR登録の前処理シェル(※)を介して実行する。
 この時、コンテナ内にユーザー設定が保存済み場合は、上書きする。
 
-※ 詳細はLocalACRの構築手順書を参照
 
 ### ユーザー設定復元
 バインドフォルダが空の場合のみ、NodeRED起動時にイメージ内に保存されているユーザー設定データをバインドフォルダにコピーする。
