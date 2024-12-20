@@ -81,7 +81,7 @@ RUN chmod +x ./install_tools.sh && \
     rm ./install_tools.sh
 
 # output info
-ARG TAGS='6.0.0'
+ARG TAGS='6.1.1'
 RUN { \
 echo "module name    : GAUDINodeRED"; \
 echo "module version : ${TAGS}"; \
