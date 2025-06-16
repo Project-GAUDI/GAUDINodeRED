@@ -1,4 +1,26 @@
 # GAUDINodeRED Release Notes
+## 6.1.4
+
+* 脆弱性対応
+  * 脆弱性があるdevDependenciesライブラリ削除
+  * node-red-admin最新化
+
+## 6.1.3
+
+* 脆弱性対応
+  * Node-REDベースイメージのバージョンアップ(3.1.15)
+  * Node.jsベースイメージのバージョンアップ(node:18.20.7-slim)
+
+## 6.1.2
+
+* "Node-RED-IoTEdge"更新(6.0.2)
+  * 環境変数AzureIoTMaxOperationTimeoutを小さい値にするとノード初期化に失敗する不具合修正
+    * AzureIoTMaxOperationTimeoutの下限を設定(240000ミリ秒)
+* "Node-RED-DataCleansing"更新(6.0.2,6.0.3)
+  * data-cleansingノードの不具合対応
+    * 変換結果の出力先がpayload固定となる不具合を修正
+    * 入力メッセージの形式にGAUDI標準を選択した際に、RecordHeaderまたはRecordDataのいずれか、もしくは両方が無い場合に動作しない不具合を修正
+    * エラーログ出力の一部不具合を修正
 
 ## 6.1.1
 

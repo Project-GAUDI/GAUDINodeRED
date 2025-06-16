@@ -1,4 +1,4 @@
-FROM node:18.20.4-slim
+FROM node:18.20.7-slim
 
 # USER root
 RUN set -ex
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 
 # NodeRED build
 WORKDIR /usr/src
-RUN git clone --branch 3.1.12 --depth 1 https://github.com/node-red/node-red.git
+RUN git clone --branch 3.1.15 --depth 1 https://github.com/node-red/node-red.git
 
 WORKDIR /usr/src/node-red
 
@@ -42,9 +42,11 @@ RUN npm uninstall node-red-node-test-helper
 RUN npm uninstall grunt-chmod
 RUN npm uninstall grunt-jsdoc
 RUN npm uninstall grunt-simple-nyc
+RUN npm uninstall grunt-simple-mocha
+RUN npm uninstall mocha
 # 脆弱性対策2 END
 
-RUN npm install -g --unsafe-perm node-red-admin@3.0.0
+RUN npm install -g --unsafe-perm node-red-admin@4.0.2
 
 # create Node-RED app and data dir, add user and set rights
 RUN mkdir -p /data && \
@@ -81,7 +83,7 @@ RUN chmod +x ./install_tools.sh && \
     rm ./install_tools.sh
 
 # output info
-ARG TAGS='6.1.1'
+ARG TAGS='6.1.4'
 RUN { \
 echo "module name    : GAUDINodeRED"; \
 echo "module version : ${TAGS}"; \
