@@ -38,9 +38,14 @@ GAUDINodeREDは、カスタムノードを利用可能な Node-RED を展開し�
 
 ## 機能
 カスタムノードを利用可能な Node-RED を展開する。
+> **:exclamation:フローのデプロイについての注意:**
+> フローのデプロイを実施する際、必ず<span style="color: red; ">「全て」デプロイ</span>を実施してください。<br>
+> 他種別のデプロイ(「更新したフロー」「更新したノード」)は使用しないでください。<br>
+> ![nodered_deploybutton](./docs/img/deploybutton.drawio.png)<br>
+
 
 ## Quick Start
-1. Personal Accese tokenを作成
+1. Personal Access tokenを作成
 （参考: [個人用アクセス トークンを管理する](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)）
  
 2. リポジトリをクローン
@@ -50,11 +55,11 @@ git clone https://github.com/Project-GAUDI/GAUDINodeRED.git
  
 3. Dockerイメージをビルド
 ```
-docker image build --build-arg GITHUB_TOKEN=<YOUR_Personal_Accese_Token> -t <IMAGE_NAME> ./
+docker image build --build-arg GITHUB_TOKEN=<YOUR_Personal_Access_Token> -t <IMAGE_NAME> ./
 ```
 例）
 ```
-docker image build --build-arg GITHUB_TOKEN=<YOUR_Personal_Accese_Token> -t ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION> ./
+docker image build --build-arg GITHUB_TOKEN=<YOUR_Personal_Access_Token> -t ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION> ./
 ```
  
 4. Dockerイメージをコンテナレジストリにプッシュ
@@ -81,10 +86,10 @@ docker push ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION>
 | ノードモジュール名                | 機能概要                       | バージョン | リンク |
 | --------------------------------- | ------------------------------ | ---------- | ------ |
 | node-red-blobstorage              | BlogStorage へのアクセス機能   | 6.0.1      | ...    |
-| node-red-iotedge                  | iotedge 入出力機能             | 6.0.1      | ...    |
+| node-red-iotedge                  | iotedge 入出力機能             | 6.0.2      | ...    |
 | node-red-kv                       | Keyence レジストリアクセス機能 | 6.0.1      | ...    |
 | node-red-python                   | Python コード実行機能          | 6.0.1      | ...    |
-| node-red-datacleansing            | データクレンジング機能         | 6.0.1      | ...    |
+| node-red-datacleansing            | データクレンジング機能         | 6.0.3      | ...    |
 | node-red-contrib-omron-fins       | オムロンPLCとの通信機能        | 0.5.0      | [node-red-contrib-omron-fins](https://flows.nodered.org/node/node-red-contrib-omron-fins)    |
 | node-red-contrib-mcprotocol       | MITSUBISHI PLCとの通信機能     | 1.2.1      | [node-red-contrib-mcprotocol](https://flows.nodered.org/node/node-red-contrib-mcprotocol)    |
 | node-red-contrib-python3-function | Python コード実行機能          | 0.0.4      | [node-red-contrib-python3-function](https://flows.nodered.org/node/node-red-contrib-python3-function)    |
@@ -118,9 +123,9 @@ docker push ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION>
 
 ## 動作保証環境
 
-| Module Version | IoTEdge | edgeAgent | edgeHub  | amd64 verified on | arm64v8 verified on | arm32v7 verified on |
-| -------------- | ------- | --------- | -------- | ----------------- | ------------------- | ------------------- |
-| 6.1.1          | 1.5.0   | 1.5.6     | 1.5.6    | ubuntu22.04       | －                  | －                  |
+| Module Version | IoTEdge         | edgeAgent       | edgeHub         | amd64 verified on | arm64v8 verified on | arm32v7 verified on |
+| -------------- | --------------- | --------------- | --------------- | ----------------- | ------------------- | ------------------- |
+| 6.1.4          | 1.5.0<br>1.5.16 | 1.5.6<br>1.5.19 | 1.5.6<br>1.5.19 | ubuntu22.04       | －                  | －                  |
 
 ## Deployment 設定値
 
@@ -142,7 +147,7 @@ docker push ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION>
 | GuestPassword               |          | guestP@ssw0rd |           | EnableUserLogin=trueにした場合、有効。<br>guestユーザーのパスワード |
 | EditorRoot                  |          | /             |           | エディターにアクセスするためのURLに付与するパス(※1)。<br>例："/admin"に設定すると、http://[IP]:[HostPort]/admin でエディターにアクセスすることができ、http://[IP]:[HostPort]/ でアクセスできなくなる。     |
 | SettingsJSPath              |          |               |           | NodeREDの設定ファイルSettings.jsファイルのパスを指定する。<br>bindフォルダのパスを想定している。<br><span style="color: red; ">この環境変数を使用した場合、この表の前の行までの環境変数設定は全て無効となる。主に開発・検証用の為、本設定を行った際の動作保証はしない。</span> |
-| AzureIoTMaxOperationTimeout |          | 3600000       |           | EdgeHubとの接続やメッセージ送受信等の通信において再試行が行われた際のタイムアウト時間。単位はミリ秒。 |
+| AzureIoTMaxOperationTimeout |          | 3600000       |           | EdgeHubとの接続やメッセージ送受信等の通信において再試行が行われた際のタイムアウト時間。単位はミリ秒。<br>下限は240000で、それ未満の数値を設定した場合は下限値を適用する。<br>数値以外の文字など無効な値を設定した場合は、デフォルト値を適用する。 |
 | RetryErrorFilter            |          |               |           | <span style="color: red; ">トラブル回避用のため通常時は利用不可</span><br>EdgeHubとの切断時エラーの種類によって再接続の要否を判定する際に用いられるフィルタが存在する。この環境変数でそのフィルタに対し、エラーを新規追加もしくは判定の変更ができる。<br>現状既知のエラーは全て再接続処理に進むよう設定されている。<br>値は"エラー名=[true もしくは false]"の形で設定する。設定した値以外はデフォルト(再接続処理が行われる)から変更されない。<br>trueに設定した場合は、そのエラーにより切断された時再接続処理に入る。<br>falseに設定した場合は、そのエラーにより切断された時再接続処理が行われない。<br>複数指定したい場合は","で繋ぐ。<br>例："xxxxxError=true,TimeoutError=false"で設定した場合はxxxxErrorがフィルタに追加、TimeoutErrorがfalseに変更され、他のエラーはデフォルトのまま再接続処理される設定となる。 |
 
 ※1:URLに利用可能な文字のみ指定可能。それ以外の文字はURLエンコーディングが必要。<br>
@@ -369,6 +374,7 @@ LocalACR連携機能により、ユーザー設定(デプロイしたフロー�
 ## ユースケース
 
 基本ノードや各カスタムノードのサンプルフローは、メニューの「読み込み」から挿入することが可能なため、そちらを参照
+
 ![usecase_reference](./docs/img/usecase_reference.png)
 
 ## Feedback
