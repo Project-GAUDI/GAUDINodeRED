@@ -46,6 +46,12 @@ RUN npm uninstall grunt-simple-mocha
 RUN npm uninstall mocha
 # 脆弱性対策2 END
 
+# 脆弱性対策3 START
+# ライブラリを最新バージョンでインストールしなおすことで脆弱性を回避する
+# （NodeRED本体に依存かつチェックにかかったもののみ）
+RUN npm install multer@2.0.1
+# 脆弱性対策3 END
+
 RUN npm install -g --unsafe-perm node-red-admin@4.0.2
 
 # create Node-RED app and data dir, add user and set rights
