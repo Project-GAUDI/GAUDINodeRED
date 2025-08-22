@@ -125,7 +125,7 @@ docker push ghcr.io/<YOUR_GITHUB_USERNAME>/gaudinodered:<VERSION>
 
 | Module Version | IoTEdge         | edgeAgent       | edgeHub         | amd64 verified on | arm64v8 verified on | arm32v7 verified on |
 | -------------- | --------------- | --------------- | --------------- | ----------------- | ------------------- | ------------------- |
-| 6.1.4          | 1.5.0<br>1.5.16 | 1.5.6<br>1.5.19 | 1.5.6<br>1.5.19 | ubuntu22.04       | －                  | －                  |
+| 6.1.6          | 1.5.21          | 1.5.21          | 1.5.21          | ubuntu22.04       | －                  | －                  |
 
 ## Deployment 設定値
 

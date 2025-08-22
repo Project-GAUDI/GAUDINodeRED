@@ -1,4 +1,20 @@
 # GAUDINodeRED Release Notes
+## 6.1.6
+* 脆弱性対応
+  * form-data最新化(4.0.4)
+  * multer最新化(2.0.2)
+
+## 6.1.5
+
+* 動作保証バージョン更新
+  * IoTEdge : 1.5.21
+  * edgeAgent: 1.5.21
+  * edgeHub : 1.5.21
+* 脆弱性対応
+  * requests最新化(再ビルド)
+  * lrb5最新化(再ビルド)
+  * multer最新化
+
 ## 6.1.4
 
 * 脆弱性対応
