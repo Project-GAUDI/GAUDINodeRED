@@ -44,6 +44,11 @@ RUN npm uninstall grunt-jsdoc
 RUN npm uninstall grunt-simple-nyc
 RUN npm uninstall grunt-simple-mocha
 RUN npm uninstall mocha
+
+# ライブラリを最新バージョンでインストールしなおすことで脆弱性を回避する
+# （NodeRED本体に依存かつチェックにかかったもののみ）
+RUN npm install multer@2.0.2
+RUN npm install form-data@4.0.4
 # 脆弱性対策2 END
 
 RUN npm install -g --unsafe-perm node-red-admin@4.0.2
