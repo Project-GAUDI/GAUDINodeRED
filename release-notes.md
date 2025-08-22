@@ -1,4 +1,9 @@
 # GAUDINodeRED Release Notes
+## 6.1.6
+* 脆弱性対応
+  * form-data最新化(4.0.4)
+  * multer最新化(2.0.2)
+
 ## 6.1.5
 
 * 動作保証バージョン更新
