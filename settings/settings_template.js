@@ -20,6 +20,20 @@
  *
  **/
 
+const options = {
+    year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',
+    minute:'2-digit',second:'2-digit',hour12:false
+};
+const dateTimeFormat = Intl.DateTimeFormat('japanese', options);
+
+const levels = {
+    off:1,fatal:10,error:20,warn:30,info:40,debug:50,trace:60,audit:98,metric:99
+};
+const levelNames = {
+    10:"1",20:"3",30:"4",40:"5",50:"6",60:"7",98:"8",
+    99:"9"
+};
+
 module.exports = {
 
 /*******************************************************************************
@@ -95,10 +109,10 @@ module.exports = {
      */
 
     /** Option 1: static object */
-    //https: {
-    //  key: require("fs").readFileSync('privkey.pem'),
-    //  cert: require("fs").readFileSync('cert.pem')
-    //},
+    $https$: {
+        key: $enable_privatekeyfilepath$ ? require("fs").readFileSync('$privatekeyfilepath$') : "",
+        cert: $enable_certificationfilepath$ ? require("fs").readFileSync('$certificationfilepath$') : ""
+    },
 
     /** Option 2: function that returns the HTTP configuration object */
     // https: function() {
@@ -125,7 +139,7 @@ module.exports = {
      * including node-red-dashboard, or the static content (httpStatic), the
      * following properties can be used.
      * The `pass` field is a bcrypt hash of the password.
-     * See http://nodered.org/docs/security.html#generating-the-password-hash
+     * See https://nodered.org/docs/security.html#generating-the-password-hash
      */
     //httpNodeAuth: {user:"user",pass:"$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN."},
     //httpStaticAuth: {user:"user",pass:"$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN."},
@@ -138,11 +152,13 @@ module.exports = {
  *  - httpServerOptions
  *  - httpAdminRoot
  *  - httpAdminMiddleware
+ *  - httpAdminCookieOptions
  *  - httpNodeRoot
  *  - httpNodeCors
  *  - httpNodeMiddleware
  *  - httpStatic
  *  - httpStaticRoot
+ *  - httpStaticCors
  ******************************************************************************/
 
     /** the tcp port that the Node-RED web server is listening on */
@@ -158,7 +174,7 @@ module.exports = {
     /** The maximum size of HTTP request that will be accepted by the runtime api.
      * Default: 5mb
      */
-    //apiMaxLength: '5mb',
+    apiMaxLength: '$apimaxlength$',
 
     /** The following property can be used to pass custom options to the Express.js
      * server used by Node-RED. For a full list of available options, refer
@@ -183,6 +199,16 @@ module.exports = {
     //    next();
     // },
 
+    /** The following property can be used to set addition options on the session
+     * cookie used as part of adminAuth authentication system
+     * Available options are documented here: https://www.npmjs.com/package/express-session#cookie
+     */
+    httpAdminCookieOptions: {
+        httpOnly: true,                 // Reject access by JavaScript
+        secure: false,                  // Allow HTTP as well, so not restricted to HTTPS connections
+        sameSite: "Lax",                // Limit cross-site requests
+        maxAge: 12 * 60 * 60            // Valid for 12 hours
+    },
 
     /** Some nodes, such as HTTP In, can be used to listen for incoming http requests.
      * By default, these are served relative to '/'. The following property
@@ -228,10 +254,18 @@ module.exports = {
      * to move httpAdminRoot
      */
     //httpStatic: '/home/nol/node-red-static/', //single static source
-    /* OR multiple static sources can be created using an array of objects... */
+    /**
+     *  OR multiple static sources can be created using an array of objects...
+     *  Each object can also contain an options object for further configuration.
+     *  See https://expressjs.com/en/api.html#express.static for available options.
+     *  They can also contain an option `cors` object to set specific Cross-Origin
+     *  Resource Sharing rules for the source. `httpStaticCors` can be used to
+     *  set a default cors policy across all static routes.
+     */
     //httpStatic: [
     //    {path: '/home/nol/pics/',    root: "/img/"},
     //    {path: '/home/nol/reports/', root: "/doc/"},
+    //    {path: '/home/nol/videos/',  root: "/vid/", options: {maxAge: '1d'}}
     //],
 
     /**
@@ -244,10 +278,26 @@ module.exports = {
      */
     //httpStaticRoot: '/static/',
 
+    /** The following property can be used to configure cross-origin resource sharing
+     * in the http static routes.
+     * See https://github.com/troygoode/node-cors#configuration-options for
+     * details on its contents. The following is a basic permissive set of options:
+     */
+    //httpStaticCors: {
+    //    origin: "*",
+    //    methods: "GET,PUT,POST,DELETE"
+    //},
+
+    /** The following property can be used to modify proxy options */
+    // proxyOptions: {
+    //     mode: "legacy", // legacy mode is for non-strict previous proxy determination logic (node-red < v4 compatible)
+    // },
+
 /*******************************************************************************
  * Runtime Settings
  *  - lang
  *  - runtimeState
+ *  - telemetry
  *  - diagnostics
  *  - logging
  *  - contextStorage
@@ -286,6 +336,22 @@ module.exports = {
         /** show or hide runtime stop/start options in the node-red editor. Must be set to `false` to hide */
         ui: $enableflowstop$,
     },
+    telemetry: {
+        /** 
+         * By default, telemetry is disabled until the user provides consent the first
+         * time they open the editor.
+         * 
+         * The following property can be uncommented and set to true/false to enable/disable
+         * telemetry without seeking further consent in the editor.
+         * The user can override this setting via the user settings dialog within the editor
+         */
+        enabled: false,
+        /**
+         * If telemetry is enabled, the editor will notify the user if a new version of Node-RED
+         * is available. Set the following property to false to disable this notification.
+         */
+        updateNotification: false
+    },
     /** Configure the logging output */
     logging: {
         /** Only console logging is currently supported */
@@ -303,7 +369,54 @@ module.exports = {
             /** Whether or not to include metric events in the log output */
             metrics: $enablemetrics$,
             /** Whether or not to include audit events in the log output */
-            audit: false
+            audit: false,
+            handler: function(conf) {
+                return function(msg) {
+                    // level
+                    var levelString = "<" + levelNames[msg.level] + ">";
+
+                    // date
+                    var date = new Date(msg.timestamp);
+                    var dateString = date.toLocaleDateString('sv-SE');                  // yyyy-mm-dd 形式のロケールが'sv-SE'
+                    var timeString = date.toLocaleTimeString('ja-JP', {hour12:false});  // hh:mm:ss形式のロケールが'ja-JP'
+                    var millString = ('00' + date.getMilliseconds()).slice(-3);         // fffを取得
+
+                    // timezone
+                    var timezone= date.getTimezoneOffset();
+                    var signString = "+";
+                    if (Math.sign(timezone < 0)){
+                        signString = "-";
+                    }
+                    var hhString = ('00' + Math.floor(Math.abs(timezone)/60)).slice(-2);
+                    var mmString = ('00' + Math.abs(timezone)%60 ).slice(-2);
+                    var tzString = signString + hhString + ":" + mmString;
+
+                    // log
+                    var logString = levelString + " "+ dateString + " " + timeString + "." + millString + " " + tzString;
+
+                    // output
+                    switch (msg.level) {
+                        case levels.metric:
+                            console.log(logString+" "+JSON.stringify(msg));
+                            break;
+
+                        case levels.audit:
+                            console.log(logString+" "+JSON.stringify(msg));
+                            break;
+                        default:
+                            if (msg.msg && msg.msg.stack) {
+                                console.log(logString+" "+(msg.type?"["+msg.type+":"+(msg.name||msg.id)+"] ":"")+msg.msg.stack);
+                            } else {
+                                var message = msg.msg;
+                                if (typeof message === 'object' && message !== null && message.toString() === '[object Object]' && message.message) {
+                                    message = message.message;
+                                }
+                                console.log(logString+" "+(msg.type?"["+msg.type+":"+(msg.name||msg.id)+"] ":"")+message);
+                            }
+                            break;
+	                }
+	            }
+	        }
         }
     },
 
@@ -427,7 +540,20 @@ module.exports = {
                 //fontFamily: "Cascadia Code, Fira Code, Consolas, 'Courier New', monospace",
                 //fontLigatures: true,
             }
-        }
+        },
+
+        markdownEditor: {
+            mermaid: {
+                /** enable or disable mermaid diagram in markdown document
+                 */
+                enabled: true
+            }
+        },
+
+        multiplayer: {
+            /** To enable the Multiplayer feature, set this value to true */
+            enabled: true
+        },
     },
 
 /*******************************************************************************
@@ -435,10 +561,13 @@ module.exports = {
  *  - fileWorkingDirectory
  *  - functionGlobalContext
  *  - functionExternalModules
+ *  - globalFunctionTimeout
+ *  - functionTimeout
  *  - nodeMessageBufferMaxLength
  *  - ui (for use with Node-RED Dashboard)
  *  - debugUseColors
  *  - debugMaxLength
+ *  - debugStatusLength
  *  - execMaxBufferSize
  *  - httpRequestTimeout
  *  - mqttReconnectTime
@@ -459,6 +588,21 @@ module.exports = {
     /** Allow the Function node to load additional npm modules directly */
     functionExternalModules: true,
 
+
+    /**
+     * The default timeout (in seconds) for all Function nodes.
+     * Individual nodes can set their own timeout value within their configuration.
+     */
+    globalFunctionTimeout: 0,
+
+    /**
+      * Default timeout, in seconds, for the Function node. 0 means no timeout is applied
+      * This value is applied when the node is first added to the workspace - any changes
+      * must then be made with the individual node configurations.
+      * To set a global timeout value, use `globalFunctionTimeout`
+     */
+    functionTimeout: 0,
+
     /** The following property can be used to set predefined values in Global Context.
      * This allows extra node modules to be made available with in Function node.
      * For example, the following:
@@ -467,7 +611,6 @@ module.exports = {
      *    global.get("os")
      */
     functionGlobalContext: {
-        python3Command: '/usr/src/node-red/venv/bin/python3'
         // os:require('os'),
     },
 
@@ -491,6 +634,9 @@ module.exports = {
 
     /** The maximum length, in characters, of any message sent to the debug sidebar tab */
     debugMaxLength: 1000,
+
+    /** The maximum length, in characters, of status messages under the debug node */
+    //debugStatusLength: 32,
 
     /** Maximum buffer size for the exec node. Defaults to 10Mb */
     //execMaxBufferSize: 10000000,

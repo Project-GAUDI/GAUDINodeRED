@@ -16,9 +16,9 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
@@ -26,4 +26,4 @@ jobs:
     - name: Build image
       run: docker image build --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} -t ghcr.io/project-gaudi/gaudinodered:${{ env.version }} ./
       env: 
-        version: 6.1.1  # バージョンを指定
+        version: 7.0.2  # バージョンを指定
