@@ -1,6 +1,167 @@
 # GAUDINodeRED Release Notes
-## 6.1.6
+
+## 7.0.2
+
 * 脆弱性対応
+  * Node-RED本体ソースのバージョンアップ(5.0.8)
+  * Node.jsベースイメージのバージョンアップ(node:24.22.0-slim)  
+
+## 7.0.1
+
+* 脆弱性対応
+  * Node-RED本体ソースのバージョンアップ(5.0.7)
+  * Node.jsベースイメージのバージョンアップ(node:24.21.0-slim)
+  * aptパッケージの更新
+    * expat
+    * pcre2-utils
+  * Pythonツール関係更新
+    * pip3=26.2.0
+    * setuptools=83.0.0
+    * urllib3=2.8.0
+  * Node.jsパッケージの更新
+    * axios=1.20.0
+    * ip-address=10.7.1
+    * brace-expansion=5.0.12
+    * undici=6.28.1
+    * fast-uri=3.1.8
+    * qs=6.16.0
+    * uuid=11.1.1
+    * proxy-addr=2.0.8
+    * moment=2.31.0
+    * multer=2.4.0
+    * tar=7.5.21
+* 動作保証バージョン更新
+  * IoTEdge   : 1.6.4
+  * edgeAgent : 1.6.4
+  * edgeHub   : 1.6.4  
+
+## 7.0.0
+
+* 本体モジュール・各種参照ライブラリの修正
+  * Node-RED本体ソースのバージョンアップ(5.0.1)
+  * Node.jsベースイメージのバージョンアップ(node:24.18.0-slim)
+  * Pythonツール関係更新
+    * pip3=26.1.2
+* 動作保証バージョン更新
+  * ubuntu    : 24.04
+  * IoTEdge   : 1.6.0
+  * edgeAgent : 1.6.0
+  * edgeHub   : 1.6.0
+* devDependenciesインストール除外
+  * npm installコマンドに -omit=dev追加
+
+## 6.2.6
+
+* 脆弱性対応
+  * Node.jsベースイメージ：22.22.2-bookworm-slim⇒22.23.1-bookworm-slim
+  * Node-RED本体ソースのバージョンアップ(4.1.11)
+  * libtasn最新化
+  * python最新化
+  * multer最新化
+  * form-data最新化
+
+## 6.2.5
+
+* 脆弱性対応
+  * Node-RED本体ソースのバージョンアップ(4.1.10)
+  * openssl最新化
+  * lodash-es最新化
+  * axios最新化
+  * picomatch最新化
+  * fast-uri最新化
+  * immutable最新化
+  * uuid最新化
+
+## 6.2.4
+
+* 脆弱性対応
+  * Node.jsベースイメージ：22.22.0-slim→22.22.2-bookworm-slim
+  * openssl最新化
+  * tar最新化
+  * lodash-es最新化
+  * axios最新化
+  * picomatch最新化
+
+## 6.2.3
+
+* 脆弱性問題対応
+  * Node-RED本体ソースのバージョンアップ(4.1.8)
+  * multer最新化(2.1.1)
+  * tar最新化(7.5.8)
+  * lodash-es最新化(4.18.0)
+  * picomatch最新化(4.0.4)
+  * axios最新化(1.13.5)
+  * path-to-regexp最新化(0.1.13)
+
+## 6.2.2
+
+* 脆弱性問題対応
+  * Node-RED本体ソースのバージョンアップ(4.1.6)
+  * axios最新化(再ビルド)
+
+## 6.2.1
+
+* 動作保証バージョン更新
+  * edgeAgent: 1.5.35
+  * edgeHub : 1.5.35
+* 脆弱性問題対応
+  * Node-RED本体ソースのバージョンアップ(4.1.4)
+  * Node.jsベースイメージのバージョンアップ(node:22.22.0-slim)
+  * node-red-admin最新化(4.1.2)
+  * tar最新化(7.5.7)
+  * setuptools最新化(80.10.2)
+  * urllib3最新化(2.6.3)
+  * qs最新化(再ビルド)
+  * axios最新化(再ビルド)
+  * azure-core最新化(再ビルド)
+  * openssl最新化(再ビルド)
+  * jaraco.context最新化(再ビルド)
+  * pam最新化(再ビルド)
+  * gnupg2最新化(再ビルド)
+  * wheel最新化(再ビルド)
+
+## 6.2.0
+
+* 本体モジュール・各種参照ライブラリの修正
+  * Node-RED本体ソースのバージョンアップ(4.1.0)
+  * Node.jsベースイメージのバージョンアップ(node:22.20.0-slim)
+  * Pythonツール関係更新
+    * python3=3.11.2-1+b1
+    * python-is-python3=3.11.2-1+deb12u1
+    * pip3=25.2
+  * Pythonライブラリ関係更新
+    * setuptools==80.9.0
+    * wheel==0.45.1
+    * pandas==2.3.2
+* Node-RED本体バージョンアップによる設定ファイルテンプレート最新化
+* 課題対応
+  * ユーザーログイン有効時のパスワードを半角英数＋記号のみに修正
+  * 仕様書からのGAUDINodeREDノウハウ資料へのリンク修正
+  * 環境変数：SettingJSPath設定時に不要な環境変数を読み取る不具合の修正
+  * 環境変数の省略可能項目の挙動修正
+* Commonsの最新化(ver6.1.1)
+* Templateの反映(ver6.1.0)
+* 脆弱性問題対応
+  * urllib3最新化(2.6.0)
+  * glob最新化(再ビルド)
+* azureiotedge-connected-registryのサポート終了に伴い、LocalACR連携機能を削除
+
+## 6.1.7
+
+* 動作保証バージョン追加
+  * edgeAgent: 1.5.29
+  * edgeHub : 1.5.29
+* 脆弱性問題対応
+  * sqlite3最新化(再ビルド)
+  * glibc最新化(2.36-9+deb12u13)
+  * expat最新化(再ビルド)
+  * axios最新化(再ビルド)
+  * perl最新化(再ビルド)
+  * 個別でインストールしていたnode-red-admin削除
+
+## 6.1.6
+
+* 脆弱性問題対応
   * form-data最新化(4.0.4)
   * multer最新化(2.0.2)
 
@@ -12,7 +173,7 @@
   * edgeHub : 1.5.21
 * 脆弱性対応
   * requests最新化(再ビルド)
-  * lrb5最新化(再ビルド)
+  * krb5最新化(再ビルド)
   * multer最新化
 
 ## 6.1.4
@@ -23,6 +184,10 @@
 
 ## 6.1.3
 
+* 動作保証バージョン追加
+  * IoTEdge : 1.5.16
+  * edgeAgent: 1.5.19
+  * edgeHub : 1.5.19
 * 脆弱性対応
   * Node-REDベースイメージのバージョンアップ(3.1.15)
   * Node.jsベースイメージのバージョンアップ(node:18.20.7-slim)
@@ -64,28 +229,28 @@
   * 開発・検証用として、Settings.jsの直接指定環境変数を追加
 
 * healthcheck対応
-  * healthcheck.jsの不備で、dockerのステータスが（unhealthy）となっている問題を修正
+  * healthcheck.jsの不備で、Dockerのステータスが（unhealthy）となっている問題を修正
 
 ## 6.0.1
 
-* pythonツールおよびライブラリの依存関係不具合修正
-  * pythonツール関係更新
-    - python3=3.11.2-1+b1
-    - python-is-python3=3.11.2-1+deb12u1
-    - python3-pip=23.0.1+dfsg-1
-  * pythonライブラリ関係更新
-    - wheel==0.44.0
-    - azure-storage-blob==12.23.0
-    - pandas==2.2.2
+* Pythonツールおよびライブラリの依存関係不具合修正
+  * Pythonツール関係更新
+    * python3=3.11.2-1+b1
+    * python-is-python3=3.11.2-1+deb12u1
+    * python3-pip=23.0.1+dfsg-1
+  * Pythonライブラリ関係更新
+    * wheel==0.44.0
+    * azure-storage-blob==12.23.0
+    * pandas==2.2.2
 
 ## 6.0.0
 
-* Dockerイメージベースから、オリジナルのNodeREDソースベースに変更
+* DockerイメージベースからオリジナルのNode-REDソースベースに変更
 * ログの出力フォーマット変更
 * TemplateDR-DXPlatformArea 6.0.0の反映
   * spec.md修正
   * パイプライン修正
-  * IoTEdge1.5対応
+  * IoTEdge 1.5対応
   * ubuntu-22.04対応
 * 個別パイプライン修正
   * 使用Feed選択可能化
@@ -167,9 +332,6 @@
   * IoTEdge  : 1.4.3
   * edgeAgent: 1.4.4
   * edgeHub  : 1.4.4
-
-## 1.7.3
-
 * spec.mdの目次・見出し修正
 
 ## 1.7.2
@@ -213,6 +375,7 @@
 ## 1.3.0
 
 * 下記Pythonライブラリを同梱 (AMD64のみ)
+
   | Name       | Version      |
   | ---------- | ------------ |
   | matplotlib | 3.4.3        |
