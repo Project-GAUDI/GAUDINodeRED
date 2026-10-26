@@ -1,10 +1,10 @@
-FROM node:18.20.7-slim
+FROM node:24.22.0-slim
 
 # USER root
 RUN set -ex
 
 # install tools
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         bash \
         tzdata \
         curl \
@@ -15,43 +15,40 @@ RUN apt-get update && apt-get install -y \
         openssh-client \
         ca-certificates \
         iputils-ping \
-        vim
+        vim \
+    && apt-get install -y --only-upgrade openssl libssl3 git libc6 curl libcurl4 expat pcre2-utils \
+    && rm -rf /var/lib/apt/lists/*
 
 # NodeRED build
 WORKDIR /usr/src
-RUN git clone --branch 3.1.15 --depth 1 https://github.com/node-red/node-red.git
+RUN git clone --branch 5.0.8 --depth 1 https://github.com/node-red/node-red.git
 
 WORKDIR /usr/src/node-red
 
-# 脆弱性対策1 START
-# npm をupdateする事で、脆弱性ありのipライブラリを除外する
-RUN npm update -g npm
-# 脆弱性対策1 END
+# npm overrides でdependency tree全体の脆弱性パッケージバージョンを強制固定
+# (transitive dependency含む / install_packages.sh完了後まで維持)
+RUN node -e "\
+  const fs = require('fs'); \
+  const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8')); \
+  pkg.overrides = { \
+    'axios': '1.20.0', \
+    'ip-address': '10.7.1', \
+    'brace-expansion': '5.0.12', \
+    'undici': '6.28.1', \
+    'fast-uri': '3.1.8', \
+    'qs': '6.16.0', \
+    'uuid': '11.1.1', \
+    'proxy-addr': '2.0.8' \
+  }; \
+  pkg.dependencies.moment='2.31.0'; \
+  fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2)); \
+"
 
 RUN npm install
+RUN npm run build
+RUN npm prune --omit=dev
 
-RUN npm install -g grunt-cli
-RUN grunt build
-
-# 脆弱性対策2 START
-# devDependencies のライブラリをアンインストールすることで脆弱性を回避する
-# （チェックにかかったもののみ）
-RUN npm uninstall dompurify
-RUN npm uninstall supertest
-RUN npm uninstall node-red-node-test-helper
-RUN npm uninstall grunt-chmod
-RUN npm uninstall grunt-jsdoc
-RUN npm uninstall grunt-simple-nyc
-RUN npm uninstall grunt-simple-mocha
-RUN npm uninstall mocha
-
-# ライブラリを最新バージョンでインストールしなおすことで脆弱性を回避する
-# （NodeRED本体に依存かつチェックにかかったもののみ）
-RUN npm install multer@2.0.2
-RUN npm install form-data@4.0.4
-# 脆弱性対策2 END
-
-RUN npm install -g --unsafe-perm node-red-admin@4.0.2
+RUN npm install -g --unsafe-perm node-red-admin@4.1.6
 
 # create Node-RED app and data dir, add user and set rights
 RUN mkdir -p /data && \
@@ -88,7 +85,7 @@ RUN chmod +x ./install_tools.sh && \
     rm ./install_tools.sh
 
 # output info
-ARG TAGS='6.1.4'
+ARG TAGS='7.0.2'
 RUN { \
 echo "module name    : GAUDINodeRED"; \
 echo "module version : ${TAGS}"; \
